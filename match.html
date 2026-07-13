@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>中英配對</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">Wordie</a>
+    <nav class="nav-links">
+      <a href="match.html">中英配對</a>
+      <a href="spell.html">英單拼寫</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <h1>中英配對</h1>
+    <p>輸入多組英文單字與中文意思，Wordie 會幫你生成四選一配對題。</p>
+
+    <div class="card form-card">
+      <label class="field-label" for="englishInput">輸入多個英文單字（每行一個）</label>
+      <textarea id="englishInput" class="input-box textarea-box" placeholder="apple&#10;book&#10;cat"></textarea>
+
+      <label class="field-label" for="chineseInput">輸入多個中文意思（每行一個）</label>
+      <textarea id="chineseInput" class="input-box textarea-box" placeholder="蘋果&#10;書&#10;貓"></textarea>
+
+      <label class="field-label" for="modeSelect">題目形式</label>
+      <select id="modeSelect" class="input-box">
+        <option value="en2zh">英文出題，選中文</option>
+        <option value="zh2en">中文出題，選英文</option>
+      </select>
+
+      <div class="button-row">
+        <button id="generateBtn" class="btn">生成選擇題</button>
+      </div>
+
+      <p id="pairMessage" class="hint-text">請輸入至少 4 組單字，系統才會生成完整的四選一題目。</p>
+    </div>
+
+    <div id="quizArea" class="card quiz-card" hidden>
+      <h3 id="quizTitle">配對題</h3>
+      <p id="questionText" class="question-text"></p>
+      <div id="options" class="options"></div>
+      <p id="feedback" class="feedback"></p>
+      <button id="nextBtn" class="btn secondary" hidden>下一題</button>
+    </div>
+  </main>
+
+  <script>
+    const englishInput = document.getElementById('englishInput');
+    const chineseInput = document.getElementById('chineseInput');
+    const modeSelect = document.getElementById('modeSelect');
+    const generateBtn = document.getElementById('generateBtn');
+    const pairMessage = document.getElementById('pairMessage');
+    const quizArea = document.getElementById('quizArea');
+    const quizTitle = document.getElementById('quizTitle');
+    const questionText = document.getElementById('questionText');
+    const options = document.getElementById('options');
+    const feedback = document.getElementById('feedback');
+    const nextBtn = document.getElementById('nextBtn');
+
+    let wordPairs = [];
+    let questionQueue = [];
+    let currentIndex = 0;
+    let currentQuestion = null;
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function parsePairs() {
+      const english = englishInput.value.split(/\n+/).map(item => item.trim()).filter(Boolean);
+      const chinese = chineseInput.value.split(/\n+/).map(item => item.trim()).filter(Boolean);
+
+      if (english.length === 0 || chinese.length === 0) {
+        pairMessage.textContent = '請至少輸入英文與中文各一行。';
+        return null;
+      }
+
+      if (english.length !== chinese.length) {
+        pairMessage.textContent = '英文與中文的行數需相同，請確認後再生成。';
+        return null;
+      }
+
+      if (english.length < 4) {
+        pairMessage.textContent = '請輸入至少 4 組單字，才能生成完整的四選一題目。';
+        return null;
+      }
+
+      return english.map((word, index) => ({ english: word, chinese: chinese[index] }));
+    }
+
+    function startQuiz() {
+      const pairs = parsePairs();
+      if (!pairs) {
+        quizArea.hidden = true;
+        return;
+      }
+
+      wordPairs = pairs;
+      questionQueue = shuffle([...pairs]);
+      currentIndex = 0;
+      pairMessage.textContent = `已建立 ${pairs.length} 組單字，開始練習吧！`;
+      showNextQuestion();
+    }
+
+    function showNextQuestion() {
+      if (currentIndex >= questionQueue.length) {
+        questionText.textContent = '題目已全部完成，歡迎再來一輪！';
+        options.innerHTML = '';
+        feedback.textContent = '';
+        nextBtn.hidden = true;
+        quizArea.hidden = false;
+        return;
+      }
+
+      const item = questionQueue[currentIndex];
+      currentQuestion = item;
+      const isEnToZh = modeSelect.value === 'en2zh';
+      const prompt = isEnToZh ? item.english : item.chinese;
+      const correctAnswer = isEnToZh ? item.chinese : item.english;
+
+      const otherPairs = wordPairs.filter(pair => (isEnToZh ? pair.chinese : pair.english) !== correctAnswer);
+      const choicePool = [correctAnswer];
+
+      while (choicePool.length < 4) {
+        const candidate = otherPairs[Math.floor(Math.random() * otherPairs.length)];
+        const value = isEnToZh ? candidate.chinese : candidate.english;
+        if (!choicePool.includes(value)) {
+          choicePool.push(value);
+        }
+      }
+
+      const finalChoices = shuffle(choicePool);
+      questionText.textContent = isEnToZh
+        ? `請選出英文「${prompt}」對應的中文：`
+        : `請選出中文「${prompt}」對應的英文：`;
+      quizTitle.textContent = '配對題';
+      options.innerHTML = finalChoices.map(choice => `<button class="option-btn" data-choice="${choice}">${choice}</button>`).join('');
+      feedback.textContent = '';
+      feedback.className = 'feedback';
+      nextBtn.hidden = true;
+      quizArea.hidden = false;
+
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleChoice(btn.dataset.choice, correctAnswer));
+      });
+    }
+
+    function handleChoice(choice, correctAnswer) {
+      const isCorrect = choice === correctAnswer;
+      feedback.textContent = isCorrect ? '答對！' : `答錯，正確答案是 ${correctAnswer}`;
+      feedback.className = `feedback ${isCorrect ? 'correct' : 'wrong'}`;
+
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.choice === correctAnswer) {
+          btn.classList.add('correct-option');
+        } else if (btn.dataset.choice === choice && !isCorrect) {
+          btn.classList.add('wrong-option');
+        }
+      });
+
+      nextBtn.hidden = false;
+    }
+
+    generateBtn.addEventListener('click', startQuiz);
+    nextBtn.addEventListener('click', () => {
+      currentIndex += 1;
+      showNextQuestion();
+    });
+  </script>
+</body>
+</html>

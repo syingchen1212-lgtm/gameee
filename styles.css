@@ -1,0 +1,181 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #fef5ff, #fef5ff);
+  color: #202124;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.brand {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #b81ae8;
+  text-decoration: none;
+}
+
+.nav-links a {
+  margin-left: 18px;
+  text-decoration: none;
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  color: #b81ae8;
+}
+
+.hero, .page {
+  max-width: 800px;
+  margin: 80px auto;
+  text-align: center;
+  padding: 24px;
+}
+
+.hero h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-top: 80px;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #333;
+  margin: 0;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #1a73e8;
+  color: white;
+  text-decoration: none;
+  border-radius: 999px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #1558b0;
+}
+
+.secondary {
+  margin-top: 20px;
+  background: #34a853;
+}
+
+.secondary:hover {
+  background: #2e8b3f;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin: 24px 0;
+}
+
+.form-card {
+  text-align: left;
+}
+
+.field-label {
+  display: block;
+  margin: 12px 0 6px;
+  font-weight: bold;
+}
+
+.input-box {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.textarea-box {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.input-box:focus {
+  outline: none;
+  border-color: #b81ae8;
+  box-shadow: 0 0 0 2px rgba(184, 26, 232, 0.15);
+}
+
+.button-row {
+  margin-top: 16px;
+}
+
+.hint-text {
+  margin-top: 10px;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.quiz-card {
+  text-align: left;
+}
+
+.question-text {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+
+.options {
+  display: grid;
+  gap: 10px;
+}
+
+.option-btn {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+  cursor: pointer;
+  text-align: left;
+}
+
+.option-btn:hover {
+  border-color: #b81ae8;
+}
+
+.option-btn:disabled {
+  cursor: default;
+}
+
+.correct-option {
+  background: #e8f5e9;
+  border-color: #34a853;
+}
+
+.wrong-option {
+  background: #ffebee;
+  border-color: #e53935;
+}
+
+.feedback {
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+.feedback.correct {
+  color: #2e7d32;
+}
+
+.feedback.wrong {
+  color: #c62828;
+}

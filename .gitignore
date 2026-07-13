@@ -1,0 +1,8 @@
+# Ignore compiled and temporary files
+app.exe
+*.obj
+*.exe
+*.pdb
+*.log
+.DS_Store
+Thumbs.db
