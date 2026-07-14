@@ -56,8 +56,6 @@
       <p id="feedback" class="feedback"></p>
       <div class="button-row">
         <button id="exitBtn" class="btn">離開測驗</button>
-        <button id="nextBtn" class="btn secondary" hidden>下一題</button>
-        <button id="returnBtn" class="btn" hidden>返回</button>
       </div>
     </div>
   </main>
@@ -75,8 +73,6 @@
     const questionText = document.getElementById('questionText');
     const options = document.getElementById('options');
     const feedback = document.getElementById('feedback');
-    const nextBtn = document.getElementById('nextBtn');
-    const returnBtn = document.getElementById('returnBtn');
     const exitBtn = document.getElementById('exitBtn');
 
     let wordPairs = [];
@@ -141,8 +137,6 @@
         questionText.textContent = `練習結束！你的分數是 ${score}/${displayCount}`;
         options.innerHTML = '';
         feedback.textContent = '';
-        nextBtn.hidden = true;
-        returnBtn.hidden = false;
         quizArea.hidden = false;
         return;
       }
@@ -172,7 +166,6 @@
       options.innerHTML = finalChoices.map(choice => `<button class="option-btn" data-choice="${choice}">${choice}</button>`).join('');
       feedback.textContent = '';
       feedback.className = 'feedback';
-      nextBtn.hidden = true;
       quizArea.hidden = false;
 
       document.querySelectorAll('.option-btn').forEach(btn => {
@@ -203,9 +196,12 @@
         setTimeout(() => {
           currentIndex += 1;
           showNextQuestion();
-        }, 600);
+        }, 500);
       } else {
-        nextBtn.hidden = false;
+        setTimeout(() => {
+          currentIndex += 1;
+          showNextQuestion();
+        }, 2000);
       }
     }
 
@@ -213,24 +209,16 @@
       localStorage.setItem('wordieScore', '0');
       startQuiz();
     });
-    nextBtn.addEventListener('click', () => {
-      currentIndex += 1;
-      showNextQuestion();
-    });
     function resetToSetup() {
       setupView.hidden = false;
       quizArea.hidden = true;
       feedback.textContent = '';
-      nextBtn.hidden = true;
-      returnBtn.hidden = true;
-      exitBtn.hidden = true;
       options.innerHTML = '';
       questionText.textContent = '';
       quizTitle.textContent = '配對題';
       pairMessage.textContent = '請輸入至少 4 組單字，系統才會生成完整的四選一題目。';
     }
 
-    returnBtn.addEventListener('click', resetToSetup);
     exitBtn.addEventListener('click', resetToSetup);
   </script>
 </body>
