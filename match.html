@@ -32,6 +32,14 @@
         <option value="zh2en">中文出題，選英文</option>
       </select>
 
+      <label class="field-label" for="questionCount">選擇題數</label>
+      <select id="questionCount" class="input-box">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+        <option value="all">全部</option>
+      </select>
+
       <div class="button-row">
         <button id="generateBtn" class="btn">生成選擇題</button>
       </div>
@@ -52,6 +60,7 @@
     const englishInput = document.getElementById('englishInput');
     const chineseInput = document.getElementById('chineseInput');
     const modeSelect = document.getElementById('modeSelect');
+    const questionCount = document.getElementById('questionCount');
     const generateBtn = document.getElementById('generateBtn');
     const pairMessage = document.getElementById('pairMessage');
     const quizArea = document.getElementById('quizArea');
@@ -105,9 +114,11 @@
       }
 
       wordPairs = pairs;
-      questionQueue = shuffle([...pairs]);
+      const totalCount = questionCount.value === 'all' ? pairs.length : parseInt(questionCount.value, 10);
+      const selectedPairs = shuffle([...pairs]).slice(0, Math.min(totalCount, pairs.length));
+      questionQueue = selectedPairs;
       currentIndex = 0;
-      pairMessage.textContent = `已建立 ${pairs.length} 組單字，開始練習吧！`;
+      pairMessage.textContent = `已隨機抽取 ${selectedPairs.length} 題，開始練習吧！`;
       showNextQuestion();
     }
 
